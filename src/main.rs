@@ -3,23 +3,23 @@
 mod config;
 mod infrastructure;
 extern crate dotenv;
-// use std::env; // Удален, так как не используется
 
-// Импортируем только get_binance_price, т.к. BinancePrice не используется напрямую для аннотации типа
-use infrastructure::exchanges::binance::get_binance_price; 
+use infrastructure::exchanges::binance::{
+    get_binance_price, get_24hr_ticker_info, BinancePrice, BinanceTicker24hr,
+};
 
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
-    println!("Переменные окружения загружены"); // Используем println!
+    println!("Переменные окружения загружены");
 
-    println!("Запускаем CryptoForge"); // Используем println!
+    println!("Запускаем CryptoForge");
 
     let symbol = "BTCUSDT";
 
-    // ЭТОТ БЛОК match ОЧЕНЬ ВАЖЕН! ОН ДОЛЖЕН БЫТЬ ТОЧНО ТАКИМ: Ok(price_data)
+   
     match get_binance_price(symbol).await {
-        Ok(price_data) => { // <-- ВОТ ЗДЕСЬ ИСПРАВЛЕНИЕ: ТОЛЬКО `Ok(price_data)`
+        Ok(price_data) => {
             println!(
                 "
             Symbol: {}
@@ -32,5 +32,33 @@ async fn main() {
             println!("Error: {}", e);
         }
     }
-    println!("CryptoForge завершил работу"); // Используем println!
+
+    match get_24hr_ticker_info(symbol).await {
+        Ok(ticker_data) => {
+            print!("
+        --- Динамика за 24 часа ---
+        Symbol: {}
+        Last Price: {}
+        24h Change: {} ({:.2}%)
+        24h High: {}
+        24h Low: {}
+        24h Volume: {}",
+            ticker_data.symbol,
+                ticker_data.last_price,
+                ticker_data.price_change,
+                ticker_data
+                    .price_change_percent
+                    .parse::<f64>()
+                    .unwrap_or(0.0), // Конвертируем в f64 для форматирования
+                ticker_data.high_price,
+                ticker_data.low_price,
+                ticker_data.volume
+            );
+        }
+        Err(e) => {
+            eprint!("Ошибка при получении ticker info{}", e);
+        }
+    }
+
+    println!("CryptoForge завершил работу");
 }
