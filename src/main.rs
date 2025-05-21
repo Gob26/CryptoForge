@@ -2,63 +2,25 @@
 
 mod config;
 mod infrastructure;
+// Объявляем модуль interfaces, внутри которого будет telegram
+mod interfaces;
 extern crate dotenv;
 
-use infrastructure::exchanges::binance::{
-    get_binance_price, get_24hr_ticker_info, BinancePrice, BinanceTicker24hr,
-};
+use teloxide::prelude::*;
+use log::info;
+use pretty_env_logger;
 
 #[tokio::main]
 async fn main() {
     dotenv::dotenv().ok();
-    println!("Переменные окружения загружены");
+    pretty_env_logger::init();
+    info!("Переменные окружения загружены.");
+    info!("Запускаем CryptoForge Telegram Bot...");
 
-    println!("Запускаем CryptoForge");
+    let bot = Bot::from_env();
 
-    let symbol = "BTCUSDT";
+    // Запускаем наш диспетчер бота из модуля interfaces::telegram::dispatcher
+    interfaces::telegram::dispatcher::run_bot(bot).await;
 
-   
-    match get_binance_price(symbol).await {
-        Ok(price_data) => {
-            println!(
-                "
-            Symbol: {}
-            Price: {}
-            ",
-                price_data.symbol, price_data.price
-            );
-        }
-        Err(e) => {
-            println!("Error: {}", e);
-        }
-    }
-
-    match get_24hr_ticker_info(symbol).await {
-        Ok(ticker_data) => {
-            print!("
-        --- Динамика за 24 часа ---
-        Symbol: {}
-        Last Price: {}
-        24h Change: {} ({:.2}%)
-        24h High: {}
-        24h Low: {}
-        24h Volume: {}",
-            ticker_data.symbol,
-                ticker_data.last_price,
-                ticker_data.price_change,
-                ticker_data
-                    .price_change_percent
-                    .parse::<f64>()
-                    .unwrap_or(0.0), // Конвертируем в f64 для форматирования
-                ticker_data.high_price,
-                ticker_data.low_price,
-                ticker_data.volume
-            );
-        }
-        Err(e) => {
-            eprint!("Ошибка при получении ticker info{}", e);
-        }
-    }
-
-    println!("CryptoForge завершил работу");
+    info!("CryptoForge Telegram Bot завершил работу.");
 }

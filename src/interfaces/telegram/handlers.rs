@@ -1,7 +1,7 @@
 // src/interfaces/telegram/handlers.rs
 use teloxide::{prelude::*, utils::command::BotCommands};
 //Наша инфраструктура для связи с Бинансом
-use crade::infrastructure::exchanges::binance;
+use crate::infrastructure::exchanges::binance;
 // enum Телеграмма 
 use super::commands::Command;
 
@@ -13,6 +13,16 @@ pub async fn start_handler(bot: Bot, msg: Message) -> ResponseResult<()> {
 }
 
 pub async fn price_handler(bot: Bot, msg: Message, symbol: String) -> ResponseResult<()> {
+    if symbol.is_empty() {
+        bot.send_message(
+            msg.chat.id,
+           "Пожалуйста, укажите символ для команды /price. Например: /price BTCUSDT"
+        ).await?;
+        return Ok(());
+    }
+
+
+
     match binance::get_binance_price(&symbol).await {
         Ok(price_data) => {
             bot.send_message(
@@ -40,6 +50,14 @@ pub async fn price_handler(bot: Bot, msg: Message, symbol: String) -> ResponseRe
 }
 
 pub async fn info_handler(bot: Bot, msg: Message, symbol: String) -> ResponseResult<()> {
+    if symbol.is_empty() {
+        bot.send_message(
+            msg.chat.id,
+            "Пожалуйста, укажите символ для команды /info. Например: /info BTCUSDT"
+        ).await?;
+        return Ok(());
+    }
+
     match binance::get_24hr_ticker_info(&symbol).await {
         Ok(ticker_data) => {
             bot.send_message(

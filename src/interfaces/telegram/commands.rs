@@ -7,8 +7,8 @@ use teloxide::utils::command::BotCommands;
 pub enum Command {
     #[command(description = "Справочное сообщение")]
     Start,
-    #[command(description = "Курс на валюту")]
+    #[command(description = "Курс на валюту(Пример запроса /price BTCUSDT)")]
     Price(String),
-    #[command(description = "Получаем динамику за 24 часа по валюте")]
+    #[command(description = "Получаем динамику за 24 часа по валюте(Пример запроса /info BTCUSDT)")]
     Info(String),
 }
