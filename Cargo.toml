@@ -16,8 +16,15 @@ reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 # "derive" позволяет автоматически генерировать код сериализации/десериализации для ваших структур.
 serde = { version = "1", features = ["derive"] }
 
-# Serde_json - реализация Serde для формата JSON.
+# Реализация формата JSON.
 serde_json = "1"
 
 # Крейт для загрузки переменных окружения из .env файла
 dotenv = "0.15"
+
+# Для Telegram бота
+teloxide = { version = "0.12", features = ["macros"] } # teloxide для работы с Telegram API, с макросами
+
+log = "0.4" # Стандартная библиотека логирования
+
+pretty_env_logger = "0.5" # Удобный логгер для вывода в консоль
