@@ -1,35 +1,27 @@
 [package]
 name = "CryptoForge"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
 # Асинхронный рантайм. Используем "full" для простоты в начале.
 tokio = { version = "1", features = ["full"] }
-
 # Крейт для HTTP-запросов.
 # Включаем фичи "json" (для удобной работы с JSON-телами запросов/ответов)
 # и "rustls-tls" (для HTTPS-соединений, основанных на rustls, более кроссплатформенный вариант).
 reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
-
 # Serde - фреймворк для сериализации/десериализации данных.
 # "derive" позволяет автоматически генерировать код сериализации/десериализации для ваших структур.
 serde = { version = "1", features = ["derive"] }
-
 # Реализация формата JSON.
 serde_json = "1"
-
 # Крейт для загрузки переменных окружения из .env файла
 dotenv = "0.15"
-
 # Для Telegram бота
-teloxide = { version = "0.12", features = ["macros"] } # teloxide для работы с Telegram API, с макросами
-
+teloxide = { version = "0.12", features = ["macros"] }
+dptree = "0.3"
 log = "0.4" # Стандартная библиотека логирования
-
 pretty_env_logger = "0.5" # Удобный логгер для вывода в консоль
-
 # Для веб-сервера (приема вебхуков)
 actix-web = "4"
-
 futures = "0.3"
